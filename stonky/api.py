@@ -7,17 +7,20 @@ from stonky.stock import Stock
 
 
 class Api:
-    def get_quote(self, ticket: str) -> Stock:
-        url = f"https://query1.finance.yahoo.com/v11/finance/quoteSummary/{ticket}"
+    def get_quote(self, ticket: tuple) -> Stock:
+        url = f"https://query1.finance.yahoo.com/v11/finance/quoteSummary/{ticket[0]}"
         params = {"modules": "summaryDetail,price"}
         response = self._query(url, params)
         summary_data = response["quoteSummary"]["result"][0]["summaryDetail"]
         price_data = response["quoteSummary"]["result"][0]["price"]
+        #print(price_data)
         return Stock(
-            ticket=ticket,
+            ticket=ticket[0],
+            name=ticket[1],
             currency_code=price_data["currency"],
             amount_bid=summary_data["bid"].get("raw", 0.0),
             amount_ask=summary_data["ask"].get("raw", 0.0),
+            amount_now=price_data["regularMarketPrice"].get("raw", 0.0),
             amount_low=summary_data["dayLow"].get("raw", 0.0),
             amount_high=summary_data["dayHigh"].get("raw", 0.0),
             amount_prev_close=summary_data["previousClose"].get("raw", 0.0),
@@ -25,7 +28,7 @@ class Api:
             delta_percent=price_data["regularMarketChangePercent"].get(
                 "raw", 0.0
             ),
-            volume=summary_data["volume"]["raw"],
+            volume=price_data["regularMarketVolume"]["raw"],
         )
 
     def get_forex_rates(self, base: str) -> Forex:

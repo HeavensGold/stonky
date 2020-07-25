@@ -2,14 +2,16 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from stonky.forex import Forex
-
+import sys
 
 @dataclass
 class Stock:
     ticket: str = ""
+    name: str = ""
     currency_code: str = "USD"
     amount_bid: float = 0
     amount_ask: float = 0
+    amount_now: float = 0
     amount_low: float = 0
     amount_high: float = 0
     amount_prev_close: float = 0
@@ -59,12 +61,15 @@ class Stock:
             symbol = "▬"
         else:
             symbol = "▲"
-        s = self.ticket.ljust(8)
+        if self.name:
+            s = self.name.ljust(12)
+        else: 
+            s = self.ticket.ljust(12)
         s += self.volume_str.ljust(8)
-        s += "@ " + f"{self.amount_bid:.2f}".ljust(8)
+        s += "@ " + f"{self.amount_now:.2f}".ljust(12)
         s += symbol
         s += f"{self.delta_amount:+,.2f} {self.delta_percent*100:+.2f}%".rjust(
-            15
+            18
         )
         return s
 

@@ -1,0 +1,4 @@
+#!/bin/bash
+cd $HOME/python/stonky
+python3.7 main.py
+

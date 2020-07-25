@@ -8,12 +8,12 @@ from stonky.const import EPILOG
 from stonky.forex import Forex
 from stonky.types import SortType
 from pkg_resources import resource_filename
-
+import sys
 
 @dataclass
 class Settings:
     positions: Dict[str, int] = field(default_factory=dict)
-    watchlist: List[str] = field(default_factory=list)
+    watchlist: List[tuple] = field(default_factory=list)
     config_path: Path = Path.home() / ".stonky.cfg"
     cash: Dict[str, float] = field(default_factory=dict)
     refresh: Optional[float] = None
@@ -77,7 +77,7 @@ class Settings:
                 amount = float(amount.replace(",", ""))
                 self.positions[ticket.upper()] = amount
         if "watchlist" in parser:
-            tickets = [line[0].upper() for line in parser.items("watchlist")]
+            tickets = parser.items("watchlist")
             self.watchlist += tickets
         if "cash" in parser:
             for currency_code, amount in parser.items("cash"):

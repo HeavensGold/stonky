@@ -61,7 +61,7 @@ class Stock:
             symbol = "▬"
         else:
             symbol = "▲"
-        if self.name:
+        if self.name and isinstance(self.name, str):
             s = self.name.ljust(12)
         else: 
             s = self.ticket.ljust(12)
@@ -75,8 +75,8 @@ class Stock:
 
     @property
     def position(self) -> str:
-        s = self.ticket.ljust(8)
-        s += f"{self.delta_amount:+,.2f}".ljust(8)
+        s = self.ticket.ljust(12)
+        s += f"{self.delta_amount:+,.2f}".ljust(12)
         s += f"{self.delta_percent*100:+.2f}%"
         return s
 

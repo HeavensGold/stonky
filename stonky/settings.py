@@ -12,7 +12,7 @@ import sys
 
 @dataclass
 class Settings:
-    positions: Dict[str, int] = field(default_factory=dict)
+    positions: List[tuple] = field(default_factory=list)
     watchlist: List[tuple] = field(default_factory=list)
     config_path: Path = Path.home() / ".stonky.cfg"
     cash: Dict[str, float] = field(default_factory=dict)
@@ -22,7 +22,8 @@ class Settings:
 
     @property
     def all_tickets(self):
-        return set(self.positions.keys()) | set(self.watchlist)
+        setresults = set(self.positions) | set(self.watchlist)
+        return setresults
 
     def __post_init__(self):
         self._get_args()
@@ -75,7 +76,8 @@ class Settings:
         if "positions" in parser:
             for ticket, amount in parser.items("positions"):
                 amount = float(amount.replace(",", ""))
-                self.positions[ticket.upper()] = amount
+                position = tuple((ticket, amount))
+                self.positions.append(position)
         if "watchlist" in parser:
             tickets = parser.items("watchlist")
             self.watchlist += tickets

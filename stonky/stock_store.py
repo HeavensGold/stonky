@@ -5,7 +5,7 @@ from typing import List
 from stonky.api import Api
 from stonky.settings import Settings
 from stonky.stock import Stock
-
+import sys
 
 class StockStore(Mapping):
     def __init__(self, api: Api, config: Settings):
@@ -25,9 +25,10 @@ class StockStore(Mapping):
 
     def update_stocks(self):
         self._stocks = {
-            ticket: self.api.get_quote(ticket)
+            ticket[0]: self.api.get_quote(ticket)
             for ticket in self.settings.all_tickets
         }
+
         if self.settings.currency:
             forex = self.api.get_forex_rates(self.settings.currency)
             for stock in self._stocks.values():
@@ -35,18 +36,19 @@ class StockStore(Mapping):
 
     @property
     def watchlist(self) -> List[Stock]:
+        wlist = [ ticket for ticket, name in self.settings.watchlist ]
         return self._try_sort(
             [
                 stock
                 for ticket, stock in self.items()
-                if ticket in self.settings.watchlist
+                if ticket in wlist
             ]
         )
 
     @property
     def positions(self) -> List[Stock]:
         results = []
-        for ticket, amount in self.settings.positions.items():
+        for ticket, amount in self.settings.positions:
             stock = copy(self[ticket])
             stock.delta_amount *= amount
             results.append(stock)
@@ -55,7 +57,7 @@ class StockStore(Mapping):
     @property
     def profit_and_loss(self):
         pnl = {}
-        for ticket, amount in self.settings.positions.items():
+        for ticket, amount in self.settings.positions:
             stock = copy(self[ticket])
             stock.delta_amount *= amount
             stock.amount_prev_close *= amount
@@ -77,7 +79,7 @@ class StockStore(Mapping):
     @property
     def balances(self):
         balances = {}
-        for ticket, amount in self.settings.positions.items():
+        for ticket, amount in self.settings.positions:
             stock = self[ticket]
             if stock.currency_code not in balances:
                 balances[stock.currency_code] = stock.amount_bid * amount

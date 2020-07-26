@@ -4,6 +4,7 @@ from urllib.request import urlopen
 
 from stonky.forex import Forex
 from stonky.stock import Stock
+import sys
 
 
 class Api:

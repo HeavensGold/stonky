@@ -1,3 +1,6 @@
+import gevent
+gevent.monkey.patch_socket()
+
 from collections.abc import Mapping
 from copy import copy
 from typing import List
@@ -24,10 +27,11 @@ class StockStore(Mapping):
         return len(self._stocks)
 
     def update_stocks(self):
-        self._stocks = {
-            ticket[0]: self.api.get_quote(ticket)
-            for ticket in self.settings.all_tickets
-        }
+        stocks_list = [gevent.spawn(self.api.get_quote, ticket) for ticket in self.settings.all_tickets]
+        result = gevent.joinall(stocks_list)
+        self._stocks = { stock.value.ticket.lower(): stock.value for stock in stocks_list }
+        #print(self._stocks)
+        #sys.exit()
 
         if self.settings.currency:
             forex = self.api.get_forex_rates(self.settings.currency)

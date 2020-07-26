@@ -14,7 +14,7 @@ import sys
 class Settings:
     positions: List[tuple] = field(default_factory=list)
     watchlist: List[tuple] = field(default_factory=list)
-    config_path: Path = Path.home() / ".stonky.cfg"
+    config_path: Path = Path() / ".stonky.cfg"
     cash: Dict[str, float] = field(default_factory=dict)
     refresh: Optional[float] = None
     sort: Optional[SortType] = SortType.CHANGE
@@ -22,7 +22,12 @@ class Settings:
 
     @property
     def all_tickets(self):
-        setresults = set(self.positions) | set(self.watchlist)
+        setWatchNames = [ name[0] for name in set(self.watchlist) ]
+        setPositions = [ pos  for  pos in set(self.positions) if pos[0] not in setWatchNames ] 
+        setresults = set(self.watchlist) | set(setPositions)
+
+        #print(setresults)
+        #sys.exit()
         return setresults
 
     def __post_init__(self):

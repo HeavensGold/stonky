@@ -1,3 +1,5 @@
+import gevent.monkey
+gevent.monkey.patch_all()
 import json
 from urllib.parse import urlencode
 from urllib.request import urlopen
@@ -14,6 +16,7 @@ class Api:
         response = self._query(url, params)
         summary_data = response["quoteSummary"]["result"][0]["summaryDetail"]
         price_data = response["quoteSummary"]["result"][0]["price"]
+        #print(ticket[0])
         #print(price_data)
         return Stock(
             ticket=ticket[0],

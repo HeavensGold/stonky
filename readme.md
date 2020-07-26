@@ -26,7 +26,7 @@ From termux command line window,
 pkg install clang python git
 git clone https://github.com/HeavensGold/stonky.git
 cd stonky
-pip install -r requiremnets.txt  ##installing gevent module on the phone takes a looooot of time. be patient:)
+pip install -r requirements.txt  ##installing gevent module on the phone takes a looooot of time. be patient:)
 ```
 
 ## How to run(for android phone)

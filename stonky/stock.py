@@ -62,21 +62,21 @@ class Stock:
         else:
             symbol = "▲"
         if self.name and isinstance(self.name, str):
-            s = self.name.ljust(12)
+            s = self.name.ljust(10)
         else: 
-            s = self.ticket.ljust(12)
-        s += self.volume_str.ljust(8)
-        s += "@ " + f"{self.amount_now:.2f}".ljust(12)
+            s = self.ticket.ljust(10)
+        s += self.volume_str.ljust(7)
+        s += "@ " + f"{self.amount_now:.1f}".ljust(9)
         s += symbol
-        s += f"{self.delta_amount:+,.2f} {self.delta_percent*100:+.2f}%".rjust(
-            18
+        s += f"{self.delta_amount:+.1f} {self.delta_percent*100:+.1f}%".rjust(
+            15
         )
         return s
 
     @property
     def position(self) -> str:
-        s = self.ticket.ljust(12)
-        s += f"{self.delta_amount:+,.2f}".ljust(12)
+        s = self.ticket.ljust(10)
+        s += f"{self.delta_amount:+,.1f}".ljust(10)
         s += f"{self.delta_percent*100:+.2f}%"
         return s
 

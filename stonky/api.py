@@ -13,8 +13,14 @@ class Api:
     def get_quote(self, ticket: tuple) -> Stock:
         url = f"https://query1.finance.yahoo.com/v11/finance/quoteSummary/{ticket[0]}"
         params = {"modules": "summaryDetail,price"}
-        response = self._query(url, params)
-        summary_data = response["quoteSummary"]["result"][0]["summaryDetail"]
+        try:
+            response = self._query(url, params)
+        except Exception as e:
+            print("Error while calling api.py get_quote()!")
+            print(e, type(e))
+            sys.exit(1)
+
+        #summary_data = response["quoteSummary"]["result"][0]["summaryDetail"]
         price_data = response["quoteSummary"]["result"][0]["price"]
         #print(ticket[0])
         #print(price_data)
@@ -22,12 +28,13 @@ class Api:
             ticket=ticket[0],
             name=ticket[1],
             currency_code=price_data["currency"],
-            amount_bid=summary_data["bid"].get("raw", 0.0),
-            amount_ask=summary_data["ask"].get("raw", 0.0),
+            #amount_bid=summary_data["bid"].get("raw", 0.0),
+            #amount_ask=summary_data["ask"].get("raw", 0.0),
             amount_now=price_data["regularMarketPrice"].get("raw", 0.0),
-            amount_low=summary_data["dayLow"].get("raw", 0.0),
-            amount_high=summary_data["dayHigh"].get("raw", 0.0),
-            amount_prev_close=summary_data["previousClose"].get("raw", 0.0),
+            #amount_low=summary_data["dayLow"].get("raw", 0.0),
+            #amount_high=summary_data["dayHigh"].get("raw", 0.0),
+            #amount_prev_close=summary_data["previousClose"].get("raw", 0.0),
+            amount_prev_close=price_data["regularMarketPreviousClose"].get("raw", 0.0),
             delta_amount=price_data["regularMarketChange"].get("raw", 0.0),
             delta_percent=price_data["regularMarketChangePercent"].get(
                 "raw", 0.0
